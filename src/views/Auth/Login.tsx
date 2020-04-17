@@ -8,43 +8,71 @@ import {
   Button,
   Text,
   View,
+  Toast,
   Content,
 } from 'native-base';
 import { TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigation } from '@react-navigation/native';
+import { StackActionHelpers } from '@react-navigation/routers/lib/typescript/src/StackRouter';
 
 import PerfectCenter from '../../components/layout/PerfectCenter';
-import { AuthState } from '../../redux/auth.slice';
+import { loginWithCredentials, AuthState } from '../../redux/auth.slice';
 import { RootState } from '../../redux';
 
-export interface CreateCredentails {
+export interface Credentails {
   email: string;
   password: string;
-  displayName: string;
 }
 
-const SignUp = () => {
+const Login = () => {
   const dispatch = useDispatch();
-  const { isLoginLoading, loginError } = useSelector<RootState, AuthState>(
-    (state) => state.auth,
-  );
+  const { isLoginLoading, loginError, isAuth } = useSelector<
+    RootState,
+    AuthState
+  >((state) => state.auth);
+  const navigation: StackActionHelpers<any> = useNavigation<any>();
 
-  const [createCredentials, setCreateCredentails] = useState<CreateCredentails>(
-    {
-      email: '',
-      password: '',
-      displayName: '',
-    },
-  );
+  const [credentials, setCredentails] = useState<Credentails>({
+    email: '',
+    password: '',
+  });
 
-  const onInputChange = (field: keyof CreateCredentails) => (text: string) => {
-    setCreateCredentails({
-      ...createCredentials,
+  const onInputChange = (field: keyof Credentails) => (text: string) => {
+    setCredentails({
+      ...credentials,
       [field]: text,
     });
   };
 
-  const onSubmit = () => {};
+  const onSubmit = () => {
+    dispatch(loginWithCredentials(credentials.email, credentials.password));
+  };
+
+  // Handle errors
+  useEffect(() => {
+    if (!loginError) return;
+    Toast.show({
+      text: loginError,
+      buttonText: 'Okay',
+      type: 'warning',
+      style: { marginTop: 20 },
+      position: 'top',
+    });
+  }, [loginError]);
+
+  // Handle login success
+  useEffect(() => {
+    if (!isAuth) return;
+    navigation.replace('Conversation');
+    Toast.show({
+      text: 'Login success',
+      // buttonText: 'Okay',
+      type: 'success',
+      style: { marginTop: 20 },
+      position: 'top',
+    });
+  }, [isAuth]);
 
   return (
     <Container>
@@ -56,27 +84,17 @@ const SignUp = () => {
               <Item stackedLabel>
                 <Label>Email</Label>
                 <Input
-                  value={createCredentials.email}
+                  value={credentials.email}
                   textContentType="emailAddress"
                   autoCompleteType="email"
                   autoCapitalize="none"
                   onChangeText={onInputChange('email')}
                 />
               </Item>
-              <Item stackedLabel>
-                <Label>Display name</Label>
-                <Input
-                  value={createCredentials.displayName}
-                  textContentType="emailAddress"
-                  autoCompleteType="email"
-                  autoCapitalize="none"
-                  onChangeText={onInputChange('displayName')}
-                />
-              </Item>
               <Item stackedLabel last>
                 <Label>Password</Label>
                 <Input
-                  value={createCredentials.password}
+                  value={credentials.password}
                   onChangeText={onInputChange('password')}
                   textContentType="password"
                   autoCapitalize="none"
@@ -103,7 +121,7 @@ const SignUp = () => {
   );
 };
 
-export default SignUp;
+export default Login;
 
 const styles = StyleSheet.create({
   contentView: {

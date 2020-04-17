@@ -1,6 +1,6 @@
 import { createSlice, Dispatch, PayloadAction } from '@reduxjs/toolkit';
 
-export type ConversationState = {};
+export interface ConversationState {}
 
 const initialState: ConversationState = {};
 

@@ -1,15 +1,15 @@
 import { combineReducers, Reducer } from 'redux';
 
-import userReducer, { UserState } from './user.slice';
+import authReducer, { AuthState } from './auth.slice';
 
 export interface RootState {
-  user: UserState;
+  auth: AuthState;
   //   chatroom: ConversationState;
   //   message: MessageState;
 }
 
 const rootReducer: Reducer<RootState> = combineReducers({
-  user: userReducer,
+  auth: authReducer,
   //   chatroom: chatroomReducer,
   //   message: messageReducer,
 });
