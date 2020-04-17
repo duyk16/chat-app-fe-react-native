@@ -1,61 +1,18 @@
-import React from 'react';
-import { GiftedChat, IMessage } from 'react-native-gifted-chat';
+import React, { FC } from 'react';
+import { Provider } from 'react-redux';
+import { StatusBar } from 'react-native';
+import 'react-native-gesture-handler';
 
-type P = {};
+import store from './store';
+import Navigator from './Navigator';
 
-type S = {
-  messages: IMessage[];
+const App: FC = () => {
+  return (
+    <Provider store={store}>
+      <StatusBar barStyle="dark-content" />
+      <Navigator />
+    </Provider>
+  );
 };
-
-class App extends React.Component<P, S> {
-  constructor(props: P) {
-    super(props);
-    
-    this.state = {
-      messages: [],
-    };
-  }
-
-  componentDidMount() {
-    this.setState({
-      messages: [
-        {
-          _id: 1,
-          text: 'Hello developer',
-          createdAt: new Date(),
-          user: {
-            _id: 2,
-            name: 'React Native',
-            avatar: 'https://placeimg.com/140/140/any',
-          },
-          image:
-            'https://cdn2.iconfinder.com/data/icons/social-icons-33/128/Github-512.png',
-        },
-      ],
-    });
-  }
-
-  onSend(message: IMessage[] = []) {
-    let messages = GiftedChat.append(this.state.messages, message);
-    this.setState({ messages });
-  }
-
-  render() {
-    return (
-      <GiftedChat
-        messages={this.state.messages}
-        placeholder={'Type a message'}
-        onSend={(message) => {
-          this.onSend(message);
-        }}
-        user={{
-          _id: 1,
-          name: 'React Native 1',
-          avatar: 'https://placeimg.com/140/140/any',
-        }}
-      />
-    );
-  }
-}
 
 export default App;
