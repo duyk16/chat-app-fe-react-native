@@ -1,8 +1,20 @@
 import io from 'socket.io-client';
 
-const socket = io({
-  hostname: 'http://localhost:3001',
-  timeout: 10000,
-});
+import { SOCKET_HOST_NAME } from '../config/server';
+
+let _socket: SocketIOClient.Socket;
+
+function socket(): SocketIOClient.Socket {
+  if (!_socket) {
+    _socket = io(SOCKET_HOST_NAME, {
+      transports: ['websocket'],
+    });
+
+    _socket.on('connection', () => {
+      console.log('connected');
+    });
+  }
+  return _socket;
+}
 
 export default socket;

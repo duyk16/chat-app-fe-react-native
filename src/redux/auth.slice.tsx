@@ -8,6 +8,7 @@ import { REFRESH_TOKEN } from '../config/keyStorage';
 export interface AuthState {
   userId: string;
   email: string;
+  displayName: string;
   accessToken: string;
   refreshToken: string;
 
@@ -24,6 +25,7 @@ export interface AuthState {
 const initialState: AuthState = {
   userId: '',
   email: '',
+  displayName: '',
   accessToken: '',
   refreshToken: '',
 
@@ -70,6 +72,7 @@ const authSlice = createSlice({
 
       state.email = action.payload.email;
       state.userId = action.payload.id;
+      state.displayName = action.payload.displayName;
       state.accessToken = action.payload.accessToken;
       state.refreshToken = action.payload.refreshToken;
     },
@@ -77,6 +80,13 @@ const authSlice = createSlice({
     loginFail(state, action: PayloadAction<string>) {
       state.isLoginLoading = false;
       state.loginError = action.payload;
+    },
+
+    /**
+     * Logout
+     */
+    logout(state) {
+      return initialState;
     },
 
     /**
@@ -88,9 +98,7 @@ const authSlice = createSlice({
   },
 });
 
-const authReducer = authSlice.reducer;
-export default authReducer;
-
+export const authReducer = authSlice.reducer;
 export const authActions = authSlice.actions;
 
 /**
@@ -166,6 +174,14 @@ export const loginWithCredentials = (email: string, password: string) => async (
     dispatch(authActions.loginFail(''));
     throw error;
   }
+};
+
+/**
+ * Logout
+ */
+export const getLogout = () => async (dispatch: Dispatch) => {
+  await AsyncStorage.removeItem(REFRESH_TOKEN);
+  dispatch(authActions.logout());
 };
 
 /**

@@ -1,17 +1,19 @@
 import { combineReducers, Reducer } from 'redux';
 
-import authReducer, { AuthState } from './auth.slice';
+import { authReducer, AuthState } from './auth.slice';
+import { conversationReducer, ConversationState } from './conversation.slice';
+import { chatReducer, ChatState } from './chat.slice';
 
 export interface RootState {
   auth: AuthState;
-  //   chatroom: ConversationState;
-  //   message: MessageState;
+  conversation: ConversationState;
+  chat: ChatState;
 }
 
 const rootReducer: Reducer<RootState> = combineReducers({
   auth: authReducer,
-  //   chatroom: chatroomReducer,
-  //   message: messageReducer,
+  conversation: conversationReducer,
+  chat: chatReducer,
 });
 
 export default rootReducer;

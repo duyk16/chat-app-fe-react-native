@@ -5,8 +5,16 @@ import { createStackNavigator } from '@react-navigation/stack';
 import Auth from './views/Auth/Auth';
 import Login from './views/Auth/Login';
 import Conversation from './views/Conversation/Conversation';
+import Chat from './views/Chat/Chat';
 
-const Stack = createStackNavigator();
+export type RootStackParamList = {
+  Auth: undefined;
+  Conversation: undefined;
+  Login: undefined;
+  Chat: { conversationId: string };
+};
+
+const Stack = createStackNavigator<RootStackParamList>();
 
 const Navigator = () => {
   return (
@@ -33,6 +41,7 @@ const Navigator = () => {
             headerShown: false,
           }}
         />
+        <Stack.Screen name="Chat" component={Chat} options={{}} />
       </Stack.Navigator>
     </NavigationContainer>
   );

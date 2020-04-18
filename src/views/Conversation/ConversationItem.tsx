@@ -1,5 +1,11 @@
-import React from 'react';
-import { StyleSheet, View, Image, Text } from 'react-native';
+import React, { FC } from 'react';
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  TouchableOpacityProps,
+} from 'react-native';
 
 import Avatar from '../../components/avatar/Avatar';
 import { timeSince } from '../../utils/time';
@@ -9,9 +15,9 @@ type P = {
   time: Date;
 };
 
-const ConversationItem = (props: P) => {
+const ConversationItem: FC<P & TouchableOpacityProps> = (props) => {
   return (
-    <View style={styles.container}>
+    <TouchableOpacity style={styles.container} {...props}>
       <View style={styles.left}>
         <Avatar style={{ marginRight: 20 }} />
         <Text style={styles.textName}>{props.username}</Text>
@@ -19,7 +25,7 @@ const ConversationItem = (props: P) => {
       <View>
         <Text style={styles.textTime}>{timeSince(props.time.getTime())}</Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 

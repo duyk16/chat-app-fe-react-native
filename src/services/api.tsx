@@ -1,7 +1,9 @@
 import Axios from 'axios';
 
+import { API_HOST_NAME } from '../config/server';
+
 const Api = Axios.create({
-  baseURL: 'http://localhost:3000',
+  baseURL: API_HOST_NAME,
   headers: {
     'Content-Type': 'application/json',
   },

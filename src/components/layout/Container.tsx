@@ -6,6 +6,7 @@ type P = {
   justifyCenter?: boolean;
   alignCenter?: boolean;
   style?: ViewStyle;
+  white?: boolean;
 };
 
 const Container: FC<P> = (p) => {
@@ -17,6 +18,7 @@ const Container: FC<P> = (p) => {
           p.perfectCenter || p.justifyCenter ? 'center' : undefined,
         alignItems: p.perfectCenter || p.alignCenter ? 'center' : undefined,
         ...p.style,
+        backgroundColor: p.white ? '#fff' : undefined,
       }}>
       {p.children}
     </View>

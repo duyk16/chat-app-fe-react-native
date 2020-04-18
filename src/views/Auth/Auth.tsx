@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, FC } from 'react';
 import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { NavigationProp, RouteProp } from '@react-navigation/native';
 import { StackActionHelpers } from '@react-navigation/routers/lib/typescript/src/StackRouter';
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -9,15 +9,24 @@ import {
   AuthState,
   authenticateWithRefreshToken,
 } from '../../redux/auth.slice';
+import { RootStackParamList } from '../../Navigator';
 
-const Auth = () => {
+type P = {
+  navigation: StackActionHelpers<RootStackParamList> & NavigationProp<any>;
+};
+
+const Auth: FC<P> = (props) => {
+  /**
+   * Redux
+   */
   const { isAuth, isAuthLoading } = useSelector<RootState, AuthState>(
     (state) => state.auth,
   );
   const dispatch = useDispatch();
 
-  const navigation: StackActionHelpers<any> = useNavigation<any>();
-
+  /**
+   * Effect
+   */
   useEffect(() => {
     dispatch(authenticateWithRefreshToken());
   }, []);
@@ -25,9 +34,9 @@ const Auth = () => {
   useEffect(() => {
     if (!isAuthLoading) {
       if (isAuth) {
-        navigation.replace('Conversation');
+        props.navigation.replace('Conversation');
       } else {
-        navigation.replace('Login');
+        props.navigation.replace('Login');
       }
     }
   }, [isAuthLoading]);
