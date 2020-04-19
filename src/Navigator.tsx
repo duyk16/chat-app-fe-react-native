@@ -3,15 +3,21 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
 import Auth from './views/Auth/Auth';
+import Chat from './views/Chat/Chat';
 import Login from './views/Auth/Login';
 import Conversation from './views/Conversation/Conversation';
-import Chat from './views/Chat/Chat';
+import Users from './views/Users/Users';
+import SignUp from './views/Auth/SignUp';
 
 export type RootStackParamList = {
   Auth: undefined;
   Conversation: undefined;
-  Login: undefined;
-  Chat: { conversationId: string };
+  Login: {
+    email?: string;
+  };
+  SignUp: undefined;
+  Chat: { conversationId: string; name: string };
+  Users: undefined;
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -30,18 +36,30 @@ const Navigator = () => {
           }}
         />
         <Stack.Screen
-          name="Conversation"
-          component={Conversation}
-          options={{}}
-        />
-        <Stack.Screen
           name="Login"
           component={Login}
           options={{
             headerShown: false,
           }}
         />
-        <Stack.Screen name="Chat" component={Chat} options={{}} />
+        <Stack.Screen
+          name="SignUp"
+          component={SignUp}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="Conversation"
+          component={Conversation}
+          options={{}}
+        />
+        <Stack.Screen name="Users" component={Users} options={{}} />
+        <Stack.Screen
+          name="Chat"
+          component={Chat}
+          options={({ route }) => ({ title: route.params.name })}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

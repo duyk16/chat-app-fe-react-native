@@ -1,5 +1,5 @@
 import React, { useEffect, FC, useLayoutEffect } from 'react';
-import { ScrollView, Button, TouchableOpacity } from 'react-native';
+import { Button, TouchableOpacity } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { NavigationProp } from '@react-navigation/native';
 import { StackActionHelpers } from '@react-navigation/routers/lib/typescript/src/StackRouter';
@@ -11,7 +11,7 @@ import {
 } from '../../redux/conversation.slice';
 
 import Container from '../../components/layout/Container';
-import ConversationItem from './ConversationItem';
+import ConversationItem from '../../components/list/ConversationItem';
 import { RootState } from '../../redux';
 import { AuthState, getLogout } from '../../redux/auth.slice';
 import { RootStackParamList } from '../../Navigator';
@@ -59,7 +59,7 @@ const Conversation: FC<P> = (props) => {
       ),
       headerRight: () => (
         <TouchableOpacity
-          onPress={() => console.log('Oke')}
+          onPress={() => props.navigation.push('Users')}
           style={{ paddingHorizontal: 15 }}>
           <AntDesign name="plus" size={24} />
         </TouchableOpacity>
@@ -77,10 +77,13 @@ const Conversation: FC<P> = (props) => {
           const username = user ? user.displayName : displayName;
           return (
             <ConversationItem
-              username={username}
+              mainText={username}
               time={new Date(item.updatedAt)}
               onPress={() => {
-                props.navigation.push('Chat', { conversationId: item._id });
+                props.navigation.push('Chat', {
+                  conversationId: item._id,
+                  name: username,
+                });
               }}
             />
           );

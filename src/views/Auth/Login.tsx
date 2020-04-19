@@ -1,4 +1,4 @@
-import React, { Component, useState, useEffect } from 'react';
+import React, { useState, useEffect, FC, useRef } from 'react';
 import {
   Container,
   Form,
@@ -11,33 +11,54 @@ import {
   Toast,
   Content,
 } from 'native-base';
-import { TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
+import {
+  TouchableOpacity,
+  StyleSheet,
+  ActivityIndicator,
+  TextInput,
+} from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigation } from '@react-navigation/native';
+import { NavigationProp, RouteProp } from '@react-navigation/native';
 import { StackActionHelpers } from '@react-navigation/routers/lib/typescript/src/StackRouter';
 
 import PerfectCenter from '../../components/layout/PerfectCenter';
 import { loginWithCredentials, AuthState } from '../../redux/auth.slice';
 import { RootState } from '../../redux';
+import { RootStackParamList } from '../../Navigator';
 
 export interface Credentails {
   email: string;
   password: string;
 }
 
-const Login = () => {
-  const dispatch = useDispatch();
+type P = {
+  navigation: StackActionHelpers<RootStackParamList> &
+    NavigationProp<RootStackParamList>;
+  route: RouteProp<RootStackParamList, 'Login'>;
+};
+
+const Login: FC<P> = (props) => {
+  /**
+   * Redux
+   */
   const { isLoginLoading, loginError, isAuth } = useSelector<
     RootState,
     AuthState
   >((state) => state.auth);
-  const navigation: StackActionHelpers<any> = useNavigation<any>();
+  const dispatch = useDispatch();
 
+  /**
+   * State
+   */
   const [credentials, setCredentails] = useState<Credentails>({
     email: '',
     password: '',
   });
 
+  /**
+   * Variables and functions
+   */
+  const passwordRef: any = useRef(null);
   const onInputChange = (field: keyof Credentails) => (text: string) => {
     setCredentails({
       ...credentials,
@@ -49,7 +70,9 @@ const Login = () => {
     dispatch(loginWithCredentials(credentials.email, credentials.password));
   };
 
-  // Handle errors
+  /**
+   * Effect
+   */
   useEffect(() => {
     if (!loginError) return;
     Toast.show({
@@ -61,10 +84,9 @@ const Login = () => {
     });
   }, [loginError]);
 
-  // Handle login success
   useEffect(() => {
     if (!isAuth) return;
-    navigation.replace('Conversation');
+    props.navigation.replace('Conversation');
     Toast.show({
       text: 'Login success',
       // buttonText: 'Okay',
@@ -73,6 +95,15 @@ const Login = () => {
       position: 'top',
     });
   }, [isAuth]);
+
+  useEffect(() => {
+    if (props.route.params.email) {
+      setCredentails({
+        ...credentials,
+        email: props.route.params.email,
+      });
+    }
+  }, []);
 
   return (
     <Container>
@@ -88,12 +119,17 @@ const Login = () => {
                   textContentType="emailAddress"
                   autoCompleteType="email"
                   autoCapitalize="none"
+                  returnKeyType="next"
+                  onSubmitEditing={() => {
+                    passwordRef.current._root.focus();
+                  }}
                   onChangeText={onInputChange('email')}
                 />
               </Item>
               <Item stackedLabel last>
                 <Label>Password</Label>
                 <Input
+                  ref={passwordRef}
                   value={credentials.password}
                   onChangeText={onInputChange('password')}
                   textContentType="password"
@@ -112,7 +148,11 @@ const Login = () => {
               )}
             </Button>
           </View>
-          <TouchableOpacity disabled={isLoginLoading}>
+          <TouchableOpacity
+            disabled={isLoginLoading}
+            onPress={() => {
+              props.navigation.navigate('SignUp');
+            }}>
             <Text style={styles.signUpText}>Sign Up</Text>
           </TouchableOpacity>
         </PerfectCenter>

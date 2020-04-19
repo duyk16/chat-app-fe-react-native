@@ -7,12 +7,13 @@ import {
   TouchableOpacityProps,
 } from 'react-native';
 
-import Avatar from '../../components/avatar/Avatar';
+import Avatar from '../avatar/Avatar';
 import { timeSince } from '../../utils/time';
 
 type P = {
-  username: string;
-  time: Date;
+  mainText: string;
+  subText?: string;
+  time?: Date;
 };
 
 const ConversationItem: FC<P & TouchableOpacityProps> = (props) => {
@@ -20,10 +21,15 @@ const ConversationItem: FC<P & TouchableOpacityProps> = (props) => {
     <TouchableOpacity style={styles.container} {...props}>
       <View style={styles.left}>
         <Avatar style={{ marginRight: 20 }} />
-        <Text style={styles.textName}>{props.username}</Text>
+        <View>
+          <Text style={styles.textName}>{props.mainText}</Text>
+          {props.subText && <Text>{props.subText}</Text>}
+        </View>
       </View>
       <View>
-        <Text style={styles.textTime}>{timeSince(props.time.getTime())}</Text>
+        <Text style={styles.textTime}>
+          {props.time ? timeSince(props.time.getTime()) : ''}
+        </Text>
       </View>
     </TouchableOpacity>
   );

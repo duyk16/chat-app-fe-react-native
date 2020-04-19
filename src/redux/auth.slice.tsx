@@ -19,6 +19,7 @@ export interface AuthState {
   loginError: string;
 
   isSignUpLoading: boolean;
+  signUpSuccess: string;
   signUpError: string;
 }
 
@@ -36,6 +37,7 @@ const initialState: AuthState = {
   loginError: '',
 
   isSignUpLoading: false,
+  signUpSuccess: '',
   signUpError: '',
 };
 
@@ -95,6 +97,19 @@ const authSlice = createSlice({
      */
     startSignUp(state) {
       state.isSignUpLoading = true;
+    },
+    signUpSuccess(state, action: PayloadAction<string>) {
+      state.isSignUpLoading = false;
+      state.signUpSuccess = 'Sign up success';
+    },
+    signUpFail(state, action: PayloadAction<string>) {
+      state.isSignUpLoading = false;
+      state.signUpError = action.payload;
+    },
+    resetSignUp(state) {
+      state.signUpError = '';
+      state.signUpSuccess = '';
+      state.isSignUpLoading = false;
     },
   },
 });
@@ -188,6 +203,11 @@ export const getLogout = () => async (dispatch: Dispatch) => {
 /**
  * Sign Up
  */
+
+interface SignUpResponse {
+  _id: string;
+  createdAt: string;
+}
 export const signUpWithCreateCredentails = (
   email: string,
   password: string,
@@ -196,9 +216,27 @@ export const signUpWithCreateCredentails = (
   dispatch(authActions.startSignUp());
 
   try {
-    Api.post('/auth/sign-up', { email, password, displayName });
+    const response = await Api.post('/auth/sign-up', {
+      email,
+      password,
+      displayName,
+    });
+    dispatch(authActions.signUpSuccess(response.data._id));
   } catch (error) {
+    console.log(error);
     if (error.isAxiosError) {
+      const axiosError = error as AxiosError;
+      if (axiosError.response?.status === 409) {
+        dispatch(authActions.signUpFail('Email was register before'));
+        return;
+      }
+
+      if (axiosError.response?.status === 400) {
+        dispatch(authActions.signUpFail(axiosError.response.data.message[0]));
+        return;
+      }
     }
+
+    dispatch(authActions.signUpFail('An error occur'));
   }
 };

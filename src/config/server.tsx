@@ -1,2 +1,2 @@
-export const API_HOST_NAME = 'http://localhost:3000';
-export const SOCKET_HOST_NAME = 'http://localhost:3001';
+export const API_HOST_NAME = 'http://139.99.91.175:8001';
+export const SOCKET_HOST_NAME = 'http://139.99.91.175:8002';

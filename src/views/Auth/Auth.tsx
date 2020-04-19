@@ -36,7 +36,7 @@ const Auth: FC<P> = (props) => {
       if (isAuth) {
         props.navigation.replace('Conversation');
       } else {
-        props.navigation.replace('Login');
+        props.navigation.replace('Login', {});
       }
     }
   }, [isAuthLoading]);
