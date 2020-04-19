@@ -1,7 +1,6 @@
 import React, { useState, FC, useEffect } from 'react';
 import { GiftedChat, IMessage } from 'react-native-gifted-chat';
 import { useSelector, useDispatch } from 'react-redux';
-import { ActivityIndicator } from 'react-native';
 import { RouteProp } from '@react-navigation/native';
 
 import { RootState } from '../../redux';
@@ -13,6 +12,7 @@ import {
   ChatState,
   sendMessage,
   MessageResponse,
+  loadMessagesEarlier,
 } from '../../redux/chat.slice';
 import { RootStackParamList } from '../../Navigator';
 import Container from '../../components/layout/Container';
@@ -23,9 +23,9 @@ type P = {
 };
 
 const Chat: FC<P> = (props) => {
-  /**
-   * Redux
-   */
+  /**=================================== */
+  /* Redux
+  /**=================================== */
   const { userId, displayName, accessToken } = useSelector<
     RootState,
     AuthState
@@ -35,26 +35,30 @@ const Chat: FC<P> = (props) => {
     (state) => state.conversation,
   );
 
-  const { messages } = useSelector<RootState, ChatState>((state) => state.chat);
+  const { messages, loadEarlier, start, end, isLoadingEarlier } = useSelector<
+    RootState,
+    ChatState
+  >((state) => state.chat);
 
   const dispatch = useDispatch();
 
-  /**
-   * Variables
-   */
+  /**=================================== */
+  /* Variables and functions
+  /**=================================== */
   const { conversationId } = props.route.params;
 
-  /**
-   * Functions
-   */
   const onSend = (newMessages: IMessage[] = []) => {
     const message = newMessages[0];
     dispatch(sendMessage(conversationId, message));
   };
 
-  /**
-   * Effect
-   */
+  function onLoadEarlier() {
+    dispatch(loadMessagesEarlier(conversationId, start + 20, end + 20));
+  }
+
+  /**=================================== */
+  /* Effect
+  /**=================================== */
   useEffect(() => {
     const members = conversations.find((item) => item._id === conversationId)!
       .members;
@@ -62,9 +66,7 @@ const Chat: FC<P> = (props) => {
     dispatch(chatActions.setConversationMembers(members));
     dispatch(getMessages(conversationId));
 
-    /**
-     * Socket
-     */
+    // Socket
     const onMessage = (message: MessageResponse) => {
       if (message.owner !== userId) dispatch(chatActions.addMessage(message));
     };
@@ -86,10 +88,13 @@ const Chat: FC<P> = (props) => {
   return (
     <Container white>
       <GiftedChat
-        renderLoading={() => <ActivityIndicator size="large" />}
+        loadEarlier={loadEarlier}
+        isLoadingEarlier={isLoadingEarlier}
+        onLoadEarlier={onLoadEarlier}
         messages={messages}
         onSend={(messages) => onSend(messages)}
         user={{ _id: userId, name: displayName }}
+        extraData={{ isLoadingEarlier }}
       />
     </Container>
   );

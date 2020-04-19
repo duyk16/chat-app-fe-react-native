@@ -9,6 +9,12 @@ export interface ChatState {
   members: ConversationMember[];
 
   isLoading: boolean;
+
+  loadEarlier: boolean;
+  isLoadingEarlier: boolean;
+  start: number;
+  end: number;
+  last: number;
 }
 
 const initialState: ChatState = {
@@ -16,6 +22,31 @@ const initialState: ChatState = {
   members: [],
 
   isLoading: false,
+
+  loadEarlier: false,
+  isLoadingEarlier: false,
+  start: 0,
+  end: 0,
+  last: 0,
+};
+
+const mapMessages = (
+  messages: MessageResponse[],
+  members: ConversationMember[],
+): IMessage[] => {
+  return messages.map((item) => {
+    const user = members.find((member) => member._id === item.owner);
+    return {
+      _id: item._id,
+      text: item.content,
+      createdAt: new Date(item.createdAt || 0),
+      user: {
+        _id: user?._id,
+        name: user?.displayName,
+      },
+      sent: true,
+    } as IMessage;
+  });
 };
 
 const chatSlice = createSlice({
@@ -25,25 +56,47 @@ const chatSlice = createSlice({
     setConversationMembers(state, action: PayloadAction<ConversationMember[]>) {
       state.members = action.payload;
     },
-    getMessagesSuccess(state, action: PayloadAction<MessageResponse[]>) {
-      state.isLoading = true;
 
-      const messages: IMessage[] = action.payload.map((item) => {
-        const user = state.members.find((member) => member._id === item.owner);
-        return {
-          _id: item._id,
-          text: item.content,
-          createdAt: new Date(item.createdAt || 0),
-          user: {
-            _id: user?._id,
-            name: user?.displayName,
-          },
-          sent: true,
-        } as IMessage;
-      });
-      state.messages = messages;
+    /**
+     * GET initial messages
+     */
+    getMessagesSuccess(state, action: PayloadAction<GetMessagesResponse>) {
+      state.loadEarlier = action.payload.end < action.payload.last;
+      state.isLoading = true;
+      state.start = action.payload.start;
+      state.end = action.payload.end;
+      state.last = action.payload.last;
+      state.messages = mapMessages(action.payload.data, state.members);
     },
 
+    /**
+     * Load earlier messages
+     */
+    startLoadEarlierMessages(state) {
+      state.isLoadingEarlier = true;
+    },
+    loadEarlierMessagesSuccess(
+      state,
+      action: PayloadAction<GetMessagesResponse>,
+    ) {
+      state.loadEarlier = action.payload.end < action.payload.last;
+      state.isLoadingEarlier = false;
+      state.start = action.payload.start;
+      state.end = action.payload.end;
+      state.last = action.payload.last;
+
+      const messages = mapMessages(action.payload.data, state.members);
+
+      state.messages = GiftedChat.append(messages, state.messages);
+    },
+    loadEarlierMessagesFail(state, action) {
+      state.loadEarlier = true;
+      state.isLoadingEarlier = false;
+    },
+
+    /**
+     * Send messages
+     */
     startSendMessage(state, action: PayloadAction<IMessage>) {
       const user = state.members.find(
         (member) => member._id === action.payload.user._id,
@@ -51,6 +104,10 @@ const chatSlice = createSlice({
       action.payload.pending = true;
       action.payload.user.name = user?.displayName;
       state.messages = GiftedChat.append(state.messages, [action.payload]);
+
+      state.start++;
+      state.end++;
+      state.last++;
     },
     sendMessageSuccess(
       state,
@@ -66,6 +123,10 @@ const chatSlice = createSlice({
         message.sent = true;
       }
     },
+
+    /**
+     * Receive message
+     */
     addMessage(state, action: PayloadAction<MessageResponse>) {
       const user = state.members.find(
         (member) => member._id === action.payload.owner,
@@ -94,6 +155,12 @@ export const chatActions = chatSlice.actions;
 /**
  * Initial messages
  */
+interface GetMessagesResponse {
+  data: MessageResponse[];
+  start: number;
+  end: number;
+  last: number;
+}
 export interface MessageResponse {
   _id: string;
   content: string;
@@ -107,13 +174,29 @@ export const getMessages = (conversationId: string) => async (
   dispatch: Dispatch,
 ) => {
   try {
-    const response = await Api.get<MessageResponse[]>(
+    const response = await Api.get<GetMessagesResponse>(
       `/conversations/${conversationId}/messages`,
     );
 
-    await new Promise((res) => setTimeout(res, 1000));
-
     dispatch(chatActions.getMessagesSuccess(response.data));
+  } catch (error) {}
+};
+
+/**
+ * Load earlier messages
+ */
+export const loadMessagesEarlier = (
+  conversationId: string,
+  start: number,
+  end: number,
+) => async (dispatch: Dispatch) => {
+  dispatch(chatActions.startLoadEarlierMessages());
+  try {
+    let response = await Api.get<GetMessagesResponse>(
+      `/conversations/${conversationId}/messages?start=${start}&end=${end}`,
+    );
+
+    dispatch(chatActions.loadEarlierMessagesSuccess(response.data));
   } catch (error) {}
 };
 

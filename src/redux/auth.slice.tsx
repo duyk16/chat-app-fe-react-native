@@ -53,6 +53,7 @@ const authSlice = createSlice({
       state.accessToken = action.payload.accessToken;
       state.email = action.payload.email;
       state.userId = action.payload.id;
+      state.displayName = action.payload.displayName;
     },
     authenticateFail(state) {
       state.isAuth = false;

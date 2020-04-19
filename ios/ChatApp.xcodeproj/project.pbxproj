@@ -20,6 +20,7 @@
 		56E5900F8087504633D42680 /* libPods-ChatApp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 88351012BCCE1076A54D539E /* libPods-ChatApp.a */; };
 		6683FEFDFB3581680AE91455 /* libPods-ChatApp-ChatAppTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 75588546FA2D0DF73EFF55F8 /* libPods-ChatApp-ChatAppTests.a */; };
 		7D469C4CC517C6A950C4CBC0 /* libPods-ChatApp-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4E3530775D8B0E690219362E /* libPods-ChatApp-tvOSTests.a */; };
+		EA5F8B6D244B740500E458F3 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EA5F8B6C244B740500E458F3 /* Launch Screen.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -64,6 +65,7 @@
 		8A318FC545390E01AFE3FE2B /* Pods-ChatApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ChatApp.release.xcconfig"; path = "Target Support Files/Pods-ChatApp/Pods-ChatApp.release.xcconfig"; sourceTree = "<group>"; };
 		9FCE023DA0F3116249586239 /* Pods-ChatApp-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ChatApp-tvOS.debug.xcconfig"; path = "Target Support Files/Pods-ChatApp-tvOS/Pods-ChatApp-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
 		B729C3995EF6F090DE803521 /* Pods-ChatApp-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ChatApp-tvOSTests.release.xcconfig"; path = "Target Support Files/Pods-ChatApp-tvOSTests/Pods-ChatApp-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
+		EA5F8B6C244B740500E458F3 /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
 		F44B1198F4E49E455A32A46F /* Pods-ChatApp-ChatAppTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ChatApp-ChatAppTests.release.xcconfig"; path = "Target Support Files/Pods-ChatApp-ChatAppTests/Pods-ChatApp-ChatAppTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -132,6 +134,7 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB11A68108700A75B9A /* LaunchScreen.xib */,
 				13B07FB71A68108700A75B9A /* main.m */,
+				EA5F8B6C244B740500E458F3 /* Launch Screen.storyboard */,
 			);
 			name = ChatApp;
 			sourceTree = "<group>";
@@ -340,6 +343,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EA5F8B6D244B740500E458F3 /* Launch Screen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
 			);
